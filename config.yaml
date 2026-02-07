@@ -1,0 +1,32 @@
+producer:
+  topic: cofee-order
+  produce_timeout: 100ms
+  producer_config:
+    bootstrap.servers: localhost:19094,localhost:29094,localhost:39094
+    request.required.acks: 1
+    enable.idempotence: false
+    message.send.max.retries: 10
+single_message_consumer:
+  name: immediate_consumer
+  batch_size: 1
+  subscribe_topics:
+    - cofee-order
+  consumer_config:
+    bootstrap.servers: localhost:19094,localhost:29094,localhost:39094
+    group.id: immediate-consumer
+    enable.auto.commit: true
+    # consume.callback.max.messages: 1 # не влияет на библиотеку
+batch_message_consumer:
+  name: batch_consumer
+  batch_size: 10
+  subscribe_topics:
+    - cofee-order
+  consumer_config:
+    bootstrap.servers: localhost:19094,localhost:29094,localhost:39094
+    group.id: batch
+    enable.auto.commit: false
+    fetch.min.bytes: 1_048_576 # минимальное количество которое comsumer получит от брокера (1Mb)
+    fetch.wait.max.ms: 1000 # максимальное время которое comsumer будет ждать сообщение от брокера (1c)
+    # consume.callback.max.messages: 10
+schemaregistry:
+  url: http://localhost:8081

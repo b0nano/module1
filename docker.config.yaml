@@ -1,0 +1,31 @@
+producer:
+  topic: cofee-order
+  produce_timeout: 100ms
+  producer_config:
+    bootstrap.servers: kafka-0:9092,kafka-1:9092,kafka-2:9092
+    request.required.acks: 1
+    enable.idempotence: false
+    message.send.max.retries: 10
+single_message_consumer:
+  name: immediate-consumer
+  batch_size: 1
+  subscribe_topics:
+    - cofee-order
+  consumer_config:
+    bootstrap.servers: kafka-0:9092,kafka-1:9092,kafka-2:9092
+    group.id: cofee-immediate-consumer-group
+    enable.auto.commit: true
+batch_message_consumer:
+  name: batchconsumer
+  batch_size: 10
+  subscribe_topics:
+    - cofee-order
+  consumer_config:
+    bootstrap.servers: kafka-0:9092,kafka-1:9092,kafka-2:9092
+    group.id: cofee-batch-consumer-group
+    enable.auto.commit: false
+    fetch.min.bytes: 1_048_576
+    fetch.wait.max.ms: 1000
+schemaregistry:
+  url: http://schema-registry:8081
+
